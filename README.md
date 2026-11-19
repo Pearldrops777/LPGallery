@@ -17,7 +17,7 @@ A lightweight, folder-based JPEG gallery plugin for **CMSimple_XH** and **PHP 8.
 1. Download `LPGallery.zip` from [planit.run.place/downloads/LPGallery/LPGallery.zip](https://planit.run.place/downloads/LPGallery/LPGallery.zip) and extract the `LPGallery` folder into your CMSimple_XH `plugins/` directory (`plugins/LPGallery/`).
 2. Create `userfiles/gallery/` once on your server with write permissions for the web server (recommended: `2775` with the web server group, e.g. `www-data`; see `help/help.htm` for exact commands and POSIX ACL notes).
 3. Ensure `plugins/LPGallery/config/` (`2775`) and `plugins/LPGallery/config/config.php` (`664`) are writable so you can save settings under **Plugins > LPGallery > Settings**.
-4. Insert `{{{LPGallery('userfiles/gallery/test')}}}` (replace test with your gallery name)on a page, open the page once to generate the folder, upload your `.jpg`/`.jpeg` photos via FTP/SFTP, and reload.
+4. Insert `{{{LPGallery('userfiles/gallery/test')}}}` (replace test with your gallery name) on a page, open the page once to generate the folder, upload your `.jpg`/`.jpeg` photos via FTP/SFTP, and reload.
 
 ## Credits & License
 * **Based on:** Martin Svarrer's classic Gallery plugin (v0.9) for CMSimple.
