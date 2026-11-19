@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LPGallery plugin: installation, permissions and photo files</title>
+<style>
+body {font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5; color: #123; max-width: 900px; margin: 24px auto; padding: 0 16px;}
+h1 {font-size: 26px; color: #257;}
+h2 {font-size: 19px; color: #257; margin-top: 28px;}
+table {border-collapse: collapse; width: 100%; margin: 12px 0;}
+th, td {border: 1px solid #c1c1c1; padding: 6px 8px; text-align: left; vertical-align: top;}
+th {background: #e6edf2;}
+code {font-family: "Courier New", monospace; background: #eeeee6; padding: 1px 4px;}
+pre {background: #eeeee6; border: 1px solid #aaa; padding: 12px 14px; overflow-x: auto; font-family: "Courier New", monospace; font-size: 14px;}
+.warn {background: #fff3cd; border: 1px solid #e0c060; padding: 8px 12px;}
+</style>
+</head>
+<body>
+
+<h1>LPGallery plugin: installation, permissions and photo files</h1>
+
+<h2>Installing the plugin</h2>
+<ol>
+<li>Unzip <code>LPGallery.zip</code> on your computer. Copy the <code>LPGallery</code> folder into the <code>plugins</code> folder of your CMSimple_XH installation, so that the files end up in <code>plugins/LPGallery/</code>.</li>
+<li>Make sure the files sit directly in <code>plugins/LPGallery/</code>, not in an extra subfolder inside it.</li>
+<li>Create <code>userfiles/gallery/</code> and set the permissions described below.</li>
+<li>Create a page and add the page tag in the form below. The tag is written with HTML entities so that the server's security filter does not block the page:
+<pre>&amp;#123;&amp;#123;&amp;#123;LPGallery('userfiles/gallery/test')&amp;#125;&amp;#125;&amp;#125;</pre>
+Open the page. LPGallery creates <code>userfiles/gallery/test/</code> and its <code>_thumbs/</code> subfolder, and a <code>.json</code> file for each photo.</li>
+</ol>
+
+<p><strong>About the name <code>test</code>:</strong> <code>test</code> is only an example. Replace it with any name you like, for example <code>holiday2026</code> or <code>cats</code>, and use that name in the page tag. Each gallery name becomes its own folder under <code>userfiles/gallery/</code>, so you can use the tag on several pages with different names. Do not use <code>..</code> in the name.</p>
+
+<p>Assumed paths: CMSimple_XH is in <code>/var/www/html</code>, and the site owner account is <code>youruser</code>. Adjust these if yours differ.</p>
+
+<h2>How permissions work</h2>
+<p>The web server user (<code>www-data</code> on Ubuntu/Debian) needs write access to <code>userfiles/gallery/</code>. You create <code>userfiles/gallery/</code> once. Everything LPGallery creates below it (gallery folders such as <code>test/</code>, their <code>_thumbs/</code> subfolders, thumbnails and <code>.json</code> files) is created automatically when a page with the gallery tag is opened.</p>
+
+<p><code>userfiles/gallery/</code> is set to <code>2775</code>. The <code>2</code> is the setgid bit: anything created inside it gets the group <code>www-data</code>, including new gallery folders. Files created by the plugin are written with mode <code>664</code>, so the group can edit them too. Keep <code>2775</code> on <code>userfiles/gallery/</code>; if it changes, new folders may not get the right group.</p>
+
+<p>Photos you copy in yourself (for example by FTP or SFTP) keep the permissions your client gives them. Reading and scaling them works as long as they are world-readable (<code>644</code>).</p>
+
+<p>If you want to edit the <code>.json</code> files or manage gallery folders yourself without <code>sudo</code>, add your account to the <code>www-data</code> group (see the commands below) and log in again.</p>
+
+<p><code>userfiles/</code> itself stays read-only (<code>755</code>) for the web server.</p>
+
+<p><strong>POSIX ACLs (<code>+</code> in <code>ls -ld</code>):</strong> if <code>ls -ld</code> shows a <code>+</code> after the permissions (for example <code>drwxrwsr-x+</code>), an access control list may override the group permissions and block <code>www-data</code> from writing. The commands below remove these lists first.</p>
+
+<h2>Folders and files</h2>
+<table>
+<tr><th>Path</th><th>Owner / group</th><th>Permissions</th><th>Why</th></tr>
+<tr><td><code>userfiles/</code></td><td><code>youruser</code> / <code>www-data</code></td><td><code>755</code></td><td>Read only. The web server does not need to write here.</td></tr>
+<tr><td><code>userfiles/gallery/</code></td><td><code>youruser</code> / <code>www-data</code></td><td><code>2775</code></td><td>Created by you once. LPGallery creates gallery folders, <code>_thumbs/</code> folders, thumbnails and <code>.json</code> files inside it.</td></tr>
+<tr><td><code>plugins/LPGallery/</code> (PHP files and <code>includes/</code>)</td><td><code>youruser</code> / <code>www-data</code></td><td>folders <code>755</code>, files <code>644</code></td><td>The web server only needs to read these.</td></tr>
+<tr><td><code>plugins/LPGallery/config/</code></td><td><code>youruser</code> / <code>www-data</code></td><td><code>2775</code></td><td>CMSimple_XH saves <code>config.php</code> here when you change the plugin settings.</td></tr>
+<tr><td><code>plugins/LPGallery/config/config.php</code></td><td><code>youruser</code> / <code>www-data</code></td><td><code>664</code></td><td>Settings saved from <strong>Plugins &gt; LPGallery &gt; Settings</strong>.</td></tr>
+</table>
+
+<p class="warn">Never use <code>777</code>. The <code>2</code> in <code>2775</code> makes sure new folders and files stay in the <code>www-data</code> group.</p>
+
+<p>LPGallery uses the stylesheet of your website template, so no plugin CSS folder or extra permissions are needed.</p>
+
+<h2>Commands</h2>
+<p>Run these on the server with <code>sudo</code>. Change the variables at the top first if needed.</p>
+<pre>CMS=/var/www/html
+OWNER=youruser
+WEB=www-data
+PLUGIN=$CMS/plugins/LPGallery
+
+# create the gallery folder once and remove blocking ACLs
+sudo mkdir -p $CMS/userfiles/gallery
+sudo setfacl -b -R $CMS/userfiles/gallery
+sudo chown -R $OWNER:$WEB $CMS/userfiles/gallery
+sudo chmod 2775 $CMS/userfiles/gallery
+
+# userfiles itself stays read-only for the web server
+sudo chown $OWNER:$WEB $CMS/userfiles
+sudo chmod 755 $CMS/userfiles
+
+# plugin code: read-only for the web server
+sudo setfacl -b -R $PLUGIN
+sudo chown -R $OWNER:$WEB $PLUGIN
+sudo find $PLUGIN -type d -exec chmod 755 {} +
+sudo find $PLUGIN -type f -exec chmod 644 {} +
+
+# plugin config folder that CMSimple_XH writes to when settings are saved
+sudo chmod 2775 $PLUGIN/config
+sudo chmod 664 $PLUGIN/config/config.php
+
+# optional: let your account edit gallery files without sudo, then log in again
+sudo usermod -aG $WEB $OWNER</pre>
+
+<p>To check the permissions afterwards:</p>
+<pre>ls -ld $CMS/userfiles $CMS/userfiles/gallery $PLUGIN/config</pre>
+
+<h2>Adding pictures</h2>
+<ol>
+<li>Copy JPEG files (<code>.jpg</code> or <code>.jpeg</code>) into the folder of your gallery, for example <code>userfiles/gallery/test/</code> (<code>test</code> is the example name; use the name from your own page tag), by FTP or SFTP.</li>
+<li>Reload the page. LPGallery creates a thumbnail in <code>_thumbs/</code> and a <code>.json</code> file for each photo, with the same name as the photo.</li>
+<li>Open the <code>.json</code> file to add a title, description, metadata or comments (see below).</li>
+</ol>
+
+<h2>The .json file for each photo</h2>
+<p>For a photo called <code>sunset.jpg</code>, LPGallery uses <code>sunset.json</code>. The file is created automatically with an empty description, the metadata fields from the setting <em>meta_default_keys</em>, and no comments:</p>
+<pre>{
+    "title": "sunset",
+    "description": "",
+    "meta": {
+        "Camera": "",
+        "Location": "",
+        "Date": ""
+    },
+    "comments": []
+}</pre>
+<ul>
+<li><strong>title</strong>: the title shown above or below the photo. The file name is used when it is empty. Underscores and hyphens are shown as spaces.</li>
+<li><strong>description</strong>: a longer text. Line breaks are kept.</li>
+<li><strong>meta</strong>: pairs of label and value. Empty values are not shown. Add labels of your own if you want more fields.</li>
+<li><strong>comments</strong>: added by visitors with the Add a comment link. Each comment has a date, an author and a message. Visitors' comments are saved to this file, so do not delete the list.</li>
+</ul>
+<p class="warn">Keep the file valid JSON: put text between double quotes, use a comma between items and no comma after the last item. Use a JSON checker if the photo's information does not appear after an edit. A broken file is ignored, so the title and comments disappear until the file is repaired.</p>
+
+<h2>Settings</h2>
+<p>Open <strong>Plugins &gt; LPGallery &gt; Settings</strong> in the CMSimple_XH administration to change these values. They are saved in <code>plugins/LPGallery/config/config.php</code>. Saving the settings rewrites that file, so do not rely on comments you add to it by hand.</p>
+
+<h3>Grid (thumbnail view)</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>grid_columns</td><td>3</td><td>Number of thumbnails side by side. Narrow screens show fewer columns automatically.</td></tr>
+<tr><td>grid_rows</td><td>3</td><td>Number of thumbnail rows per page. A page holds columns x rows photos; more photos go to the next page.</td></tr>
+<tr><td>grid_show_captions</td><td>true</td><td><code>true</code> shows the title and description under or above each thumbnail and the large photo. <code>false</code> hides them.</td></tr>
+<tr><td>grid_caption_position</td><td>below</td><td><code>below</code> or <code>above</code>: where the title and description go, relative to the picture.</td></tr>
+</table>
+
+<h3>Thumbnails</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>thumb_max_px</td><td>160</td><td>Size of the thumbnails in pixels, measured on the longest side. Thumbnails are created once and stored in <code>_thumbs/</code>.</td></tr>
+<tr><td>thumb_jpeg_quality</td><td>80</td><td>JPEG quality of the thumbnails, from 10 (smallest file) to 100 (best quality).</td></tr>
+<tr><td>thumb_square_crop</td><td>true</td><td><code>true</code> crops each thumbnail to a square from the middle of the photo. <code>false</code> keeps the whole photo, so thumbnails have their own proportions.</td></tr>
+</table>
+
+<h3>Large photo (viewer)</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>viewer_max_px</td><td>800</td><td>Size of the large photo in pixels, measured on the longest side. The photo is scaled down; it is never enlarged beyond the original.</td></tr>
+<tr><td>viewer_jpeg_quality</td><td>85</td><td>JPEG quality of the large photo, from 10 to 100. The large photo is created on each view, so a higher value means a larger file to load.</td></tr>
+</table>
+
+<h3>Watermark</h3>
+<p>The watermark is drawn on the large photo only. Thumbnails are not watermarked.</p>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>wm_text</td><td>empty</td><td>The text of the watermark, for example your site name or <code>&copy; 2026 Your Name</code>. Leave it empty for no watermark.</td></tr>
+<tr><td>wm_size</td><td>4</td><td>Size of the watermark text, from 1 (smallest) to 5 (largest).</td></tr>
+<tr><td>wm_padding</td><td>16</td><td>Distance in pixels between the watermark and the edge of the photo.</td></tr>
+<tr><td>wm_vertical</td><td>bottom</td><td>Vertical position: <code>top</code>, <code>center</code> or <code>bottom</code>.</td></tr>
+<tr><td>wm_horizontal</td><td>center</td><td>Horizontal position: <code>left</code>, <code>center</code> or <code>right</code>.</td></tr>
+<tr><td>wm_hex_color</td><td>#ffffff</td><td>Colour of the watermark text as a hex value, for example <code>#ffffff</code> for white or <code>#000000</code> for black.</td></tr>
+</table>
+<p>If the server has a TrueType font (for example DejaVu Sans), the watermark can contain any character, including the copyright sign. Otherwise the bitmap font is used. To use your own font, put a file named <code>font.ttf</code> in <code>plugins/LPGallery/</code>.</p>
+
+<h3>Metadata (extra fields)</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>meta_enabled</td><td>true</td><td><code>true</code> shows the metadata fields from each <code>.json</code> file under the large photo, as label and value. Empty values are not shown.</td></tr>
+<tr><td>meta_default_keys</td><td>Camera,Location,Date</td><td>Labels added to the <code>meta</code> section of each new <code>.json</code> file, separated by commas. Existing files are not changed, so edit them by hand if you change this later.</td></tr>
+</table>
+
+<h3>Comments</h3>
+<table>
+<tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
+<tr><td>comments_enabled</td><td>true</td><td><code>true</code> shows the comments and the Add a comment link under each large photo. <code>false</code> hides them.</td></tr>
+<tr><td>comments_captcha</td><td>true</td><td><code>true</code> asks visitors a simple sum (for example 4 + 7) before a comment is saved, to keep out spam. <code>false</code> saves comments without the question.</td></tr>
+</table>
+
+<h2>Watermark font</h2>
+<p>If the server has TrueType fonts (for example DejaVu Sans), LPGallery uses them, and the watermark can contain any character, including the copyright sign. Without one, a bitmap font is used. To use your own font, put a file named <code>font.ttf</code> in <code>plugins/LPGallery/</code>.</p>
+
+<h2>Troubleshooting</h2>
+<ul>
+<li><strong>The folder is not writable by the web server</strong>: check the permissions of <code>userfiles/gallery</code> above.</li>
+<li><strong>Could not save file ./plugins/LPGallery/config/config.php</strong>: check the permissions of the config folder and file above.</li>
+<li><strong>A 403 Forbidden page when you save the page</strong>: the server's security filter (ModSecurity) has blocked the text. Use the HTML entity form of the page tag shown above.</li>
+<li><strong>No thumbnails</strong>: check that the photos are JPEG files and that the page loads without an error message.</li>
+</ul>
+
+</body>
+</html>

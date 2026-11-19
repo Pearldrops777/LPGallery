@@ -41,14 +41,14 @@ function LPGallery(string $folder = ''): string
     $absThumbs = $absDir . '_thumbs/';
 
     if (!lpg_ensure_dir($absThumbs)) {
-        return lpg_notice('Cannot create or write to ' . $relPath . '. Check permissions on userfiles/gallery/ (see help.htm).');
+        return lpg_notice('Cannot create or write to ' . $relPath . '. Check permissions on userfiles/gallery/ (see help/help.htm).');
     }
 
     clearstatcache(true, $absDir);
     clearstatcache(true, $absThumbs);
 
     if (!is_writable($absDir) || !is_writable($absThumbs)) {
-        return lpg_notice('Folder ' . $relPath . ' is not writable by the web server (see help.htm).');
+        return lpg_notice('Folder ' . $relPath . ' is not writable by the web server (see help/help.htm).');
     }
 
     $images = lpg_scan_images($absDir);
