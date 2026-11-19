@@ -2,16 +2,16 @@
 
 /*
  * Field types for the LPGallery settings page in CMSimple_XH.
- * Fields not listed here are plain text (numbers and texts).
+ * Fields not listed here are plain text.
  */
 
-$plugin_mcf['LPGallery']['thumb_crop'] = 'bool';
-$plugin_mcf['LPGallery']['watermark_font'] = 'enum:1,2,3,4,5';
-$plugin_mcf['LPGallery']['watermark_v_align'] = 'enum:top,center,bottom';
-$plugin_mcf['LPGallery']['watermark_h_align'] = 'enum:left,center,right';
-$plugin_mcf['LPGallery']['watermark_color'] = 'color';
-$plugin_mcf['LPGallery']['show_title'] = 'bool';
-$plugin_mcf['LPGallery']['show_extrainfo'] = 'bool';
-$plugin_mcf['LPGallery']['show_comments'] = 'bool';
-$plugin_mcf['LPGallery']['title_placement'] = 'enum:top,bottom';
-$plugin_mcf['LPGallery']['comment_captcha'] = 'bool';
+$plugin_mcf['LPGallery']['grid_show_captions'] = 'bool';
+$plugin_mcf['LPGallery']['grid_caption_position'] = 'enum:above,below';
+$plugin_mcf['LPGallery']['thumb_square_crop'] = 'bool';
+$plugin_mcf['LPGallery']['wm_size'] = 'enum:1,2,3,4,5';
+$plugin_mcf['LPGallery']['wm_vertical'] = 'enum:top,center,bottom';
+$plugin_mcf['LPGallery']['wm_horizontal'] = 'enum:left,center,right';
+$plugin_mcf['LPGallery']['wm_hex_color'] = 'color';
+$plugin_mcf['LPGallery']['meta_enabled'] = 'bool';
+$plugin_mcf['LPGallery']['comments_enabled'] = 'bool';
+$plugin_mcf['LPGallery']['comments_captcha'] = 'bool';

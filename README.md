@@ -1,26 +1,39 @@
 # LPGallery for CMSimple_XH
 
-A lightweight, folder-based JPEG gallery plugin for **CMSimple_XH** and **PHP 8.5+**. Based on Martin Svarrer's classic Gallery plugin (v0.9) for CMSimple, refactored and modernized for CMSimple_XH and PHP 8.5.
+LPGallery shows a folder of JPEG photos as a thumbnail grid on a CMSimple_XH page. Clicking a thumbnail shows the large photo with a watermark, its title and description, metadata and comments. Visitors' comments are protected by a simple sum.
 
-## Download & Documentation
-* **Plugin Page & Download:** [Download LPGallery](https://planit.run.place/downloads/LPGallery/LPGallery.zip)
-* **Full Setup & Permissions Guide:** See `help/help.htm` inside the plugin package.
+## Requirements
 
-## Features
-* **Automatic Folder & Thumbnail Creation:** Add `{{{LPGallery('userfiles/gallery/test')}}}` to a CMSimple_XH page. The gallery folder, `thumb/` subfolder, `tn_*.jpg` thumbnails, and `.txt` metadata files are generated automatically.
-* **Classic `.txt` Sidecar Format:** Preserves the plain-text file structure per photo (`Title;Extra1;Extra2;...`, description lines, and `DD-MM-YYYY HH:MM;Name;Comment;` visitor comments) with a built-in math CAPTCHA.
-* **On-the-Fly Watermarking:** Scales large image views dynamically with optional UTF-8 TrueType (including `©`) or GD bitmap watermarks, configurable font size, color, alignment, and margin.
-* **Responsive & Template-Native:** Uses a responsive CSS Grid layout and inherits your active CMSimple_XH template's stylesheet automatically.
-* **PHP 8.5+ & CMSimple_XH 1.7 / 1.8+ Ready:** Modernized with clean PHP 8.5+ syntax and strict path security.
+- CMSimple_XH 1.8 (1.7 not tested)
+- PHP with the GD extension (JPEG support). Tested on PHP 8.3; PHP 8.5 is not yet tested.
+- A web server that can write to `userfiles/gallery`
 
-## Quick Installation
-1. Download `LPGallery.zip` from [planit.run.place/downloads/LPGallery/LPGallery.zip](https://planit.run.place/downloads/LPGallery/LPGallery.zip) and extract the `LPGallery` folder into your CMSimple_XH `plugins/` directory (`plugins/LPGallery/`).
-2. Create `userfiles/gallery/` once on your server with write permissions for the web server (recommended: `2775` with the web server group, e.g. `www-data`; see `help/help.htm` for exact commands and POSIX ACL notes).
-3. Ensure `plugins/LPGallery/config/` (`2775`) and `plugins/LPGallery/config/config.php` (`664`) are writable so you can save settings under **Plugins > LPGallery > Settings**.
-4. Insert `{{{LPGallery('userfiles/gallery/test')}}}` (replace test with your gallery name) on a page, open the page once to generate the folder, upload your `.jpg`/`.jpeg` photos via FTP/SFTP, and reload.
+## Installation
 
-## Credits & License
-* **Based on:** Martin Svarrer's classic Gallery plugin (v0.9) for CMSimple.
-* **Author:** Lambert Peeters
-* **License:** [GNU General Public License v3.0 (GPL-3.0)](LICENSE)
-* **Development Note:** Created and modernized with the assistance of AI (Google Gemini & Anthropic Claude).
+1. Unzip `LPGallery.zip` so that the folder `LPGallery` is in `plugins/`.
+2. Create `userfiles/gallery/` and set the permissions in `help.htm`, section "How permissions work".
+3. Create a page and add the page tag written with HTML entities:
+
+   `&#123;&#123;&#123;LPGallery('userfiles/gallery/test')&#125;&#125;&#125;`
+
+4. Open the page once. The folder, thumbnails and `.json` files are created automatically.
+5. Copy JPEG photos into the gallery folder and reload the page.
+
+Full instructions, the `.json` file format and the settings are in `help.htm`, which is linked from the Plugins menu under Help.
+
+## Files
+
+- `index.php`: the gallery pages (thumbnail grid, large photo, comment form)
+- `stream.php`: serves the large photo with the watermark
+- `includes/engine.php`: folders, thumbnails, `.json` files and comments
+- `admin.php`: the Plugins menu entries (Settings and Help)
+- `config/config.php`: the settings
+- `config/metaconfig.php`: field types for the settings page
+- `help.htm`: installation, permissions and file format
+- `LICENSE`, `license.txt`: the GNU General Public License version 3
+
+## Credits and license
+
+Copyright (C) 2026 Lambert Peeters. Licensed under the GNU General Public License version 3 (GPL-3.0); see `LICENSE` and `license.txt`.
+
+Inspired by Martin Svarrer's Gallery plugin (v0.9) for CMSimple.

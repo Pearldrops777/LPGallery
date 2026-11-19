@@ -1,5 +1,4 @@
 LPGallery – A folder-based JPEG gallery plugin for CMSimple_XH
-Based on Gallery plugin 0.9 by Martin Svarrer (cmsimpleplugins.svarrer.dk)
 Copyright (C) 2026 Lambert Peeters
 
 This program is free software: you can redistribute it and/or modify
