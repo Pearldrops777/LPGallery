@@ -67,7 +67,10 @@ $cfg = $plugin_cf['LPGallery'] ?? [];
 $wmText = trim((string) ($cfg['wm_text'] ?? ''));
 
 if ($wmText !== '') {
-    $sizeIdx = max(1, min(5, (int) ($cfg['wm_size'] ?? 4)));
+    // wm_size is a point size (6-200). Without a TrueType font, the bitmap
+    // fallback can only use GD font 1-5, so the size is mapped to the nearest one.
+    $pt = max(6, min(200, (int) ($cfg['wm_size'] ?? 15)));
+    $sizeIdx = $pt <= 9 ? 1 : ($pt <= 11 ? 2 : ($pt <= 13 ? 3 : ($pt <= 15 ? 4 : 5)));
     $padding = max(0, (int) ($cfg['wm_padding'] ?? 16));
     $posY = (string) ($cfg['wm_vertical'] ?? 'bottom');
     $posX = (string) ($cfg['wm_horizontal'] ?? 'center');
@@ -98,7 +101,6 @@ if ($wmText !== '') {
     }
 
     if ($fontFile !== null) {
-        $pt = [1 => 9, 2 => 11, 3 => 13, 4 => 15, 5 => 18][$sizeIdx];
         $box = imagettfbbox($pt, 0, $fontFile, $wmText);
         $boxW = abs((int) $box[2] - (int) $box[0]);
         $boxH = abs((int) $box[7] - (int) $box[1]);
@@ -113,7 +115,7 @@ if ($wmText !== '') {
         $y = $padding + $boxH;
         if ($posY === 'bottom') {
             $y = $outH - $padding;
-        } elseif ($posY === 'middle') {
+        } elseif ($posY === 'middle' || $posY === 'center') {
             $y = (int) (($outH + $boxH) / 2);
         }
 
@@ -133,7 +135,7 @@ if ($wmText !== '') {
         $y = $padding;
         if ($posY === 'bottom') {
             $y = $outH - $boxH - $padding;
-        } elseif ($posY === 'middle') {
+        } elseif ($posY === 'middle' || $posY === 'center') {
             $y = (int) (($outH - $boxH) / 2);
         }
 

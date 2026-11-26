@@ -6,9 +6,10 @@
  */
 
 $plugin_mcf['LPGallery']['grid_show_captions'] = 'bool';
+$plugin_mcf['LPGallery']['grid_hover_description'] = 'bool';
+$plugin_mcf['LPGallery']['grid_show_tags'] = 'bool';
 $plugin_mcf['LPGallery']['grid_caption_position'] = 'enum:above,below';
 $plugin_mcf['LPGallery']['thumb_square_crop'] = 'bool';
-$plugin_mcf['LPGallery']['wm_size'] = 'enum:1,2,3,4,5';
 $plugin_mcf['LPGallery']['wm_vertical'] = 'enum:top,center,bottom';
 $plugin_mcf['LPGallery']['wm_horizontal'] = 'enum:left,center,right';
 $plugin_mcf['LPGallery']['wm_hex_color'] = 'color';

@@ -144,6 +144,8 @@ function lpg_ensure_sidecar(string $absDir, string $imageFile): void
     $payload = [
         'title' => trim($baseTitle),
         'description' => '',
+        'tags' => '',
+        'alt' => '',
         'meta' => $metaFields,
         'comments' => [],
     ];
@@ -159,6 +161,8 @@ function lpg_read_sidecar(string $jsonPath): array
     $fallback = [
         'title' => '',
         'description' => '',
+        'tags' => '',
+        'alt' => '',
         'meta' => [],
         'comments' => [],
     ];
@@ -180,6 +184,8 @@ function lpg_read_sidecar(string $jsonPath): array
     return [
         'title' => (string) ($decoded['title'] ?? ''),
         'description' => (string) ($decoded['description'] ?? ''),
+        'tags' => (string) ($decoded['tags'] ?? ''),
+        'alt' => (string) ($decoded['alt'] ?? ''),
         'meta' => is_array($decoded['meta'] ?? null) ? $decoded['meta'] : [],
         'comments' => is_array($decoded['comments'] ?? null) ? $decoded['comments'] : [],
     ];

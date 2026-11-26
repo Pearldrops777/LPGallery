@@ -1,6 +1,12 @@
 # LPGallery for CMSimple_XH
 
-LPGallery shows a folder of JPEG photos as a thumbnail grid on a CMSimple_XH page. Clicking a thumbnail shows the large photo with a watermark, its title and description, metadata and comments. Visitors' comments are protected by a simple sum.
+LPGallery shows a folder of JPEG photos as a thumbnail grid on a CMSimple_XH page. Hovering over a thumbnail shows the photo's description over the picture. Clicking a thumbnail shows the large photo with a watermark, its title and description, metadata and comments. Visitors' comments are protected by a simple sum.
+
+Each photo's information is stored in its `.json` file:
+
+- `"description"`: shown when a visitor hovers over the thumbnail, and under the large photo. Not shown in the caption under the thumbnail. The hover can be switched off with `grid_hover_description`.
+- `"tags"`: comma-separated keywords shown in small text under each thumbnail (`grid_show_tags`) and under the description on the large photo page. Size and colour are set with `tags_font_size` and `tags_color`.
+- `"alt"`: alt text for the picture, read by screen readers and search engines. Empty means the title is used.
 
 ## Requirements
 

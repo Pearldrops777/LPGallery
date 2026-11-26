@@ -101,14 +101,25 @@ function lpg_render_grid(string $relPath, string $absDir, array $images, int $pa
     $showCaptions = lpg_bool($cfg['grid_show_captions'] ?? 'true');
     $captionPos = strtolower((string) ($cfg['grid_caption_position'] ?? 'below'));
     $showComments = lpg_bool($cfg['comments_enabled'] ?? 'true');
+    $hoverDesc = lpg_bool($cfg['grid_hover_description'] ?? 'true');
+    $showGridTags = lpg_bool($cfg['grid_show_tags'] ?? 'true');
+    $tagsSize = trim((string) ($cfg['tags_font_size'] ?? '0.75em'));
+    $tagsColor = trim((string) ($cfg['tags_color'] ?? '#888888'));
 
     $gridId = 'lpg-grid-' . substr(md5($relPath), 0, 8);
     $out .= '<style>'
         . '#' . $gridId . '{display:grid;grid-template-columns:repeat(' . $cols . ',minmax(0,1fr));gap:1rem;align-items:start;}'
         . '#' . $gridId . ' .lpg-card{margin:0;padding:0;text-align:center;}'
         . '#' . $gridId . ' .lpg-card img{max-width:100%;height:auto;display:inline-block;}'
+        . '#' . $gridId . ' .lpg-thumb-link{position:relative;display:block;}'
+        . '#' . $gridId . ' .lpg-hover-desc{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;'
+        . 'width:max-content;min-width:100%;max-width:min(24rem,90vw);box-sizing:border-box;'
+        . 'padding:.75rem 1rem;border-radius:4px;background:rgba(20,0,30,.88);color:#fff;'
+        . 'font-size:.95rem;line-height:1.35;text-align:center;opacity:0;transition:opacity .2s ease;pointer-events:none;}'
+        . '#' . $gridId . ' .lpg-thumb-link:hover .lpg-hover-desc,'
+        . '#' . $gridId . ' .lpg-thumb-link:focus .lpg-hover-desc{opacity:1;}'
         . '@media(max-width:768px){#' . $gridId . '{grid-template-columns:repeat(' . min(2, $cols) . ',minmax(0,1fr));}}'
-        . '@media(max-width:480px){#' . $gridId . '{grid-template-columns:1fr;}}'
+        . '@media(max-width:360px){#' . $gridId . '{grid-template-columns:1fr;}}'
         . '</style>';
 
     $out .= '<div id="' . $gridId . '" class="lpg-grid">';
@@ -119,6 +130,7 @@ function lpg_render_grid(string $relPath, string $absDir, array $images, int $pa
         $meta = lpg_read_sidecar($absDir . lpg_sidecar_name($file));
         $title = lpg_format_title($meta['title'], $file);
         $thumbFile = '_thumbs/' . $file;
+        $altText = $meta['alt'] !== '' ? $meta['alt'] : $title;
         $dim = @getimagesize($absDir . $thumbFile);
         $tw = $dim !== false ? (int) $dim[0] : $thumbMax;
         $th = $dim !== false ? (int) $dim[1] : $thumbMax;
@@ -127,9 +139,6 @@ function lpg_render_grid(string $relPath, string $absDir, array $images, int $pa
         if ($showCaptions) {
             $captionHtml .= '<figcaption class="lpg-caption">';
             $captionHtml .= '<span class="lpg-title">' . lpg_esc($title) . '</span>';
-            if ($meta['description'] !== '') {
-                $captionHtml .= '<span class="lpg-desc">' . nl2br(lpg_esc($meta['description'])) . '</span>';
-            }
             $captionHtml .= '</figcaption>';
         }
 
@@ -139,11 +148,21 @@ function lpg_render_grid(string $relPath, string $absDir, array $images, int $pa
         if ($captionPos === 'above') {
             $out .= $captionHtml;
         }
+        // Hover overlay with the description (CSS only, so it works without JavaScript)
+        $hoverHtml = ($hoverDesc && $meta['description'] !== '')
+            ? '<span class="lpg-hover-desc">' . nl2br(lpg_esc($meta['description'])) . '</span>'
+            : '';
         $out .= '<a class="lpg-thumb-link" href="' . lpg_esc($photoUrl) . '">'
-            . '<img class="lpg-thumb" src="' . lpg_esc(lpg_public_url($relPath, $thumbFile)) . '" width="' . $tw . '" height="' . $th . '" alt="' . lpg_esc($title) . '">'
+            . '<img class="lpg-thumb" src="' . lpg_esc(lpg_public_url($relPath, $thumbFile)) . '" width="' . $tw . '" height="' . $th . '" alt="' . lpg_esc($altText) . '">'
+            . $hoverHtml
             . '</a>';
         if ($captionPos !== 'above') {
             $out .= $captionHtml;
+        }
+        // Tags are visible, small text under the thumbnail; search engines index it too
+        if ($showGridTags && $meta['tags'] !== '') {
+            $out .= '<div class="lpg-tags lpg-grid-tags" style="font-size:' . lpg_esc($tagsSize) . ';color:' . lpg_esc($tagsColor) . '">'
+                . lpg_esc($meta['tags']) . '</div>';
         }
         if ($showComments) {
             $cCount = count($meta['comments']);
@@ -186,6 +205,7 @@ function lpg_render_viewer(string $relPath, string $absDir, array $images, int $
 
     $meta = lpg_read_sidecar($absDir . lpg_sidecar_name($file));
     $title = lpg_format_title($meta['title'], $file);
+    $altText = $meta['alt'] !== '' ? $meta['alt'] : $title;
 
     $out = '<section class="lpg-viewer">';
     $out .= '<nav class="lpg-viewer-nav">'
@@ -198,6 +218,8 @@ function lpg_render_viewer(string $relPath, string $absDir, array $images, int $
 
     $showCaptions = lpg_bool($cfg['grid_show_captions'] ?? 'true');
     $captionPos = strtolower((string) ($cfg['grid_caption_position'] ?? 'below'));
+    $tagsSize = trim((string) ($cfg['tags_font_size'] ?? '0.75em'));
+    $tagsColor = trim((string) ($cfg['tags_color'] ?? '#888888'));
 
     $headerHtml = '';
     if ($showCaptions) {
@@ -205,6 +227,9 @@ function lpg_render_viewer(string $relPath, string $absDir, array $images, int $
         $headerHtml .= '<div class="lpg-title">' . lpg_esc($title) . '</div>';
         if ($meta['description'] !== '') {
             $headerHtml .= '<div class="lpg-desc">' . nl2br(lpg_esc($meta['description'])) . '</div>';
+        }
+        if ($meta['tags'] !== '') {
+            $headerHtml .= '<div class="lpg-tags" style="font-size:' . lpg_esc($tagsSize) . ';color:' . lpg_esc($tagsColor) . '">' . lpg_esc($meta['tags']) . '</div>';
         }
         $headerHtml .= '</div>';
     }
@@ -220,7 +245,7 @@ function lpg_render_viewer(string $relPath, string $absDir, array $images, int $
     [$w, $h] = lpg_scale_dimensions($origW, $origH, $maxSide);
 
     $out .= '<div class="lpg-stage">'
-        . '<img class="lpg-photo" src="' . lpg_esc(lpg_stream_url($absDir . $file, $w, $h)) . '" width="' . $w . '" height="' . $h . '" alt="' . lpg_esc($title) . '">'
+        . '<img class="lpg-photo" src="' . lpg_esc(lpg_stream_url($absDir . $file, $w, $h)) . '" width="' . $w . '" height="' . $h . '" alt="' . lpg_esc($altText) . '">'
         . '</div>';
 
     if ($captionPos !== 'above') {

@@ -102,10 +102,12 @@ sudo usermod -aG $WEB $OWNER</pre>
 </ol>
 
 <h2>The .json file for each photo</h2>
-<p>For a photo called <code>sunset.jpg</code>, LPGallery uses <code>sunset.json</code>. The file is created automatically with an empty description, the metadata fields from the setting <em>meta_default_keys</em>, and no comments:</p>
+<p>For a photo called <code>sunset.jpg</code>, LPGallery uses <code>sunset.json</code>. The file is created automatically with empty description, tags and alt text, the metadata fields from the setting <em>meta_default_keys</em>, and no comments:</p>
 <pre>{
     "title": "sunset",
     "description": "",
+    "tags": "",
+    "alt": "",
     "meta": {
         "Camera": "",
         "Location": "",
@@ -115,7 +117,9 @@ sudo usermod -aG $WEB $OWNER</pre>
 }</pre>
 <ul>
 <li><strong>title</strong>: the title shown above or below the photo. The file name is used when it is empty. Underscores and hyphens are shown as spaces.</li>
-<li><strong>description</strong>: a longer text. Line breaks are kept.</li>
+<li><strong>description</strong>: a longer text. Line breaks are kept. It appears when a visitor hovers over the thumbnail (setting <em>grid_hover_description</em>) and under the large photo. It is not shown in the caption under the thumbnail.</li>
+<li><strong>tags</strong>: keywords separated by commas, for example <code>"sunset, beach, summer"</code>. They appear in small text under each thumbnail on the gallery page (setting <em>grid_show_tags</em>) and under the description on the large photo page. Search engines can read them. Tags are shown as text, so they should describe the photo honestly; hidden text is not allowed by search engines.</li>
+<li><strong>alt</strong>: a short description of the picture for screen readers and search engines, for example <code>"Sunset over the harbour with two sailing boats"</code>. If it is empty, the title is used.</li>
 <li><strong>meta</strong>: pairs of label and value. Empty values are not shown. Add labels of your own if you want more fields.</li>
 <li><strong>comments</strong>: added by visitors with the Add a comment link. Each comment has a date, an author and a message. Visitors' comments are saved to this file, so do not delete the list.</li>
 </ul>
@@ -129,8 +133,12 @@ sudo usermod -aG $WEB $OWNER</pre>
 <tr><th>Setting</th><th>Default</th><th>Meaning</th></tr>
 <tr><td>grid_columns</td><td>3</td><td>Number of thumbnails side by side. Narrow screens show fewer columns automatically.</td></tr>
 <tr><td>grid_rows</td><td>3</td><td>Number of thumbnail rows per page. A page holds columns x rows photos; more photos go to the next page.</td></tr>
-<tr><td>grid_show_captions</td><td>true</td><td><code>true</code> shows the title and description under or above each thumbnail and the large photo. <code>false</code> hides them.</td></tr>
-<tr><td>grid_caption_position</td><td>below</td><td><code>below</code> or <code>above</code>: where the title and description go, relative to the picture.</td></tr>
+<tr><td>grid_show_captions</td><td>true</td><td><code>true</code> shows the title under or above each thumbnail, and the title and description above or below the large photo. <code>false</code> hides them.</td></tr>
+<tr><td>grid_caption_position</td><td>below</td><td><code>below</code> or <code>above</code>: where the title and description go, relative to the picture, on the large photo page.</td></tr>
+<tr><td>tags_font_size</td><td>0.75em</td><td>Font size of the tags, both under each thumbnail and under the description on the large photo page. Any CSS size, such as <code>0.75em</code> or <code>12px</code>.</td></tr>
+<tr><td>tags_color</td><td>#888888</td><td>Colour of the tags, as a CSS colour such as <code>#888888</code>. Pick one that is readable on your background.</td></tr>
+<tr><td>grid_show_tags</td><td>true</td><td><code>true</code> shows the tags in small text under each thumbnail on the gallery page, where search engines can index them. <code>false</code> hides them there.</td></tr>
+<tr><td>grid_hover_description</td><td>true</td><td><code>true</code> shows the description over a thumbnail when the visitor hovers over it. The box widens to fit longer descriptions. <code>false</code> hides this.</td></tr>
 </table>
 
 <h3>Thumbnails</h3>
